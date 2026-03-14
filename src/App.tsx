@@ -11,6 +11,7 @@ import StaffAttendance from "@/pages/staff/StaffAttendance";
 import StaffProgress from "@/pages/staff/StaffProgress";
 import StaffMessages from "@/pages/staff/StaffMessages";
 import StaffInsights from "@/pages/staff/StaffInsights";
+import StaffProfile from "@/pages/staff/StaffProfile";
 import HodDashboard from "@/pages/hod/HodDashboard";
 import HodStaffManagement from "@/pages/hod/HodStaffManagement";
 import HodAttendance from "@/pages/hod/HodAttendance";

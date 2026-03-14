@@ -24,10 +24,10 @@ const StaffDashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Attendance" value={`${attendance}%`} icon={CalendarCheck} variant="primary" trend="up" trendValue="+2% this week" />
-        <StatCard title="Syllabus Done" value={`${syllabus}%`} icon={BookOpen} variant="warning" trend="up" trendValue="+5% this month" />
-        <StatCard title="Topics" value={`${completedTopics}/${totalTopics}`} icon={ListChecks} variant="success" />
-        <StatCard title="Messages" value={mockMessages.length} icon={MessageSquare} subtitle="1 unread" />
+        <StatCard title="Attendance" value={`${attendance}%`} icon={CalendarCheck} variant="primary" trend="up" trendValue="+2% this week" linkTo="/staff/attendance" />
+        <StatCard title="Syllabus Done" value={`${syllabus}%`} icon={BookOpen} variant="warning" trend="up" trendValue="+5% this month" linkTo="/staff/progress" />
+        <StatCard title="Topics" value={`${completedTopics}/${totalTopics}`} icon={ListChecks} variant="success" linkTo="/staff/progress" />
+        <StatCard title="Messages" value={mockMessages.length} icon={MessageSquare} subtitle="1 unread" linkTo="/staff/messages" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
