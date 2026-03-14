@@ -3,8 +3,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import StatCard from "@/components/StatCard";
 import InsightCard from "@/components/InsightCard";
 import { Users, CalendarCheck, BookOpen, MessageSquare } from "lucide-react";
-import { mockStaffList, mockDepartmentStats, mockMonthlyAttendance, getDepartmentAIInsights } from "@/data/mockData";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { mockStaffList, mockDepartmentStats, getDepartmentAIInsights } from "@/data/mockData";
 
 const HodDashboard: React.FC = () => {
   const insights = getDepartmentAIInsights(mockStaffList).slice(0, 4);
@@ -15,32 +14,16 @@ const HodDashboard: React.FC = () => {
       <p className="text-muted-foreground text-sm mb-8">Computer Science Department</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Staff" value={mockDepartmentStats.totalStaff} icon={Users} variant="primary" />
-        <StatCard title="Avg Attendance" value={`${mockDepartmentStats.avgAttendance}%`} icon={CalendarCheck} variant="success" trend="up" trendValue="+3% vs last month" />
-        <StatCard title="Avg Syllabus" value={`${mockDepartmentStats.avgSyllabus}%`} icon={BookOpen} variant="warning" />
-        <StatCard title="Subjects" value={mockDepartmentStats.totalSubjects} icon={MessageSquare} />
+        <StatCard title="Total Staff" value={mockDepartmentStats.totalStaff} icon={Users} variant="primary" linkTo="/hod/staff" />
+        <StatCard title="Avg Attendance" value={`${mockDepartmentStats.avgAttendance}%`} icon={CalendarCheck} variant="success" trend="up" trendValue="+3% vs last month" linkTo="/hod/attendance" />
+        <StatCard title="Avg Syllabus" value={`${mockDepartmentStats.avgSyllabus}%`} icon={BookOpen} variant="warning" linkTo="/hod/progress" />
+        <StatCard title="Subjects" value={mockDepartmentStats.totalSubjects} icon={MessageSquare} linkTo="/hod/communication" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-5 shadow-card">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Monthly Attendance Overview</h2>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={mockMonthlyAttendance}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} />
-                <Legend />
-                <Bar dataKey="dept" name="Department" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="hod" name="HOD Target" fill="hsl(var(--secondary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-foreground">🤖 AI Insights</h2>
+      {/* AI Insights */}
+      <div className="mb-6">
+        <h2 className="text-sm font-semibold text-foreground mb-4">🤖 AI Insights</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {insights.map((insight, i) => (
             <InsightCard key={i} type={insight.type} message={insight.message} />
           ))}
@@ -48,7 +31,7 @@ const HodDashboard: React.FC = () => {
       </div>
 
       {/* Staff quick view */}
-      <div className="mt-6 bg-card border border-border rounded-xl p-5 shadow-card">
+      <div className="bg-card border border-border rounded-xl p-5 shadow-card">
         <h2 className="text-sm font-semibold text-foreground mb-4">Staff Performance Overview</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
