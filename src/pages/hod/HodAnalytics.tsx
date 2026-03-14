@@ -1,20 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import InsightCard from "@/components/InsightCard";
 import StatCard from "@/components/StatCard";
-import { mockStaffList, mockMonthlyAttendance, getDepartmentAIInsights, mockDepartmentStats } from "@/data/mockData";
-import { Brain, BarChart3, Users, Target } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from "recharts";
+import { mockStaffList, getDepartmentAIInsights, mockDepartmentStats } from "@/data/mockData";
+import { Brain, BarChart3, Users, Target, Plus, Trash2, CheckCircle2, Circle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-const COLORS = ["hsl(152, 60%, 40%)", "hsl(38, 92%, 50%)", "hsl(0, 72%, 51%)"];
+interface TodoItem {
+  id: string;
+  text: string;
+  done: boolean;
+}
 
 const HodAnalytics: React.FC = () => {
   const insights = getDepartmentAIInsights(mockStaffList);
-  const performanceDistribution = [
-    { name: "High (>85%)", value: mockStaffList.filter((s) => s.attendance >= 85).length },
-    { name: "Medium (75-85%)", value: mockStaffList.filter((s) => s.attendance >= 75 && s.attendance < 85).length },
-    { name: "Low (<75%)", value: mockStaffList.filter((s) => s.attendance < 75).length },
-  ];
+  const [todos, setTodos] = useState<TodoItem[]>([
+    { id: "1", text: "Review staff attendance reports", done: false },
+    { id: "2", text: "Update syllabus targets for next semester", done: false },
+    { id: "3", text: "Schedule faculty meeting", done: true },
+  ]);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newTodo, setNewTodo] = useState("");
+
+  const addTodo = () => {
+    if (!newTodo.trim()) return;
+    setTodos((prev) => [...prev, { id: Date.now().toString(), text: newTodo.trim(), done: false }]);
+    setNewTodo("");
+    setShowAdd(false);
+  };
+
+  const toggleTodo = (id: string) => {
+    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
+  };
+
+  const deleteTodo = (id: string) => {
+    setTodos((prev) => prev.filter((t) => t.id !== id));
+  };
 
   return (
     <DashboardLayout>
@@ -27,35 +50,45 @@ const HodAnalytics: React.FC = () => {
         <StatCard title="Syllabus Target" value={`${mockDepartmentStats.avgSyllabus}%`} icon={Target} variant="warning" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-5 shadow-card">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Monthly Trends</h2>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={mockMonthlyAttendance}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                <YAxis domain={[60, 100]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid hsl(var(--border))", background: "hsl(var(--card))" }} />
-                <Legend />
-                <Bar dataKey="dept" name="Department Avg" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+      {/* To-Do List */}
+      <div className="bg-card border border-border rounded-xl p-6 shadow-card mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-foreground">📋 To-Do List</h2>
+          <Button size="sm" onClick={() => setShowAdd(true)} className="gap-1.5">
+            <Plus className="w-3.5 h-3.5" /> Add Task
+          </Button>
         </div>
 
-        <div className="bg-card border border-border rounded-xl p-5 shadow-card">
-          <h2 className="text-sm font-semibold text-foreground mb-4">Performance Distribution</h2>
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={performanceDistribution} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, value }) => `${name}: ${value}`}>
-                  {performanceDistribution.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+        {todos.length === 0 && (
+          <p className="text-sm text-muted-foreground text-center py-6">No tasks yet. Create one!</p>
+        )}
+
+        <div className="space-y-2">
+          {todos.map((todo) => (
+            <div
+              key={todo.id}
+              className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                todo.done ? "bg-muted/30 border-border/50" : "bg-background border-border"
+              }`}
+            >
+              <button onClick={() => toggleTodo(todo.id)} className="shrink-0">
+                {todo.done
+                  ? <CheckCircle2 className="w-5 h-5 text-success" />
+                  : <Circle className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" />
+                }
+              </button>
+              <span className={`flex-1 text-sm ${todo.done ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                {todo.text}
+              </span>
+              <button onClick={() => deleteTodo(todo.id)} className="shrink-0 text-muted-foreground hover:text-destructive transition-colors">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-3 text-xs text-muted-foreground">
+          {todos.filter((t) => t.done).length}/{todos.length} completed
         </div>
       </div>
 
@@ -70,6 +103,24 @@ const HodAnalytics: React.FC = () => {
           ))}
         </div>
       </div>
+
+      <Dialog open={showAdd} onOpenChange={setShowAdd}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Add New Task</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <Input
+              placeholder="Enter task description..."
+              value={newTodo}
+              onChange={(e) => setNewTodo(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addTodo()}
+              autoFocus
+            />
+            <Button onClick={addTodo} className="w-full">Add Task</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };
