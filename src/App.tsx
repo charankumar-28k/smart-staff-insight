@@ -39,6 +39,7 @@ const App = () => (
             <Route path="/staff/progress" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffProgress /></ProtectedRoute>} />
             <Route path="/staff/messages" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffMessages /></ProtectedRoute>} />
             <Route path="/staff/insights" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffInsights /></ProtectedRoute>} />
+            <Route path="/staff/profile" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffProfile /></ProtectedRoute>} />
 
             {/* HOD Routes */}
             <Route path="/hod" element={<ProtectedRoute allowedRole="ROLE_HOD"><HodDashboard /></ProtectedRoute>} />
