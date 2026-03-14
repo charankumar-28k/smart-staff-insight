@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
@@ -10,6 +11,7 @@ interface StatCardProps {
   trend?: "up" | "down" | "neutral";
   trendValue?: string;
   variant?: "default" | "primary" | "success" | "warning" | "danger";
+  linkTo?: string;
 }
 
 const variantStyles = {
