@@ -69,10 +69,19 @@ const SidebarContent: React.FC<{
     </nav>
 
     <div className="p-3 border-t border-sidebar-border">
-      <div className="px-3 py-2 mb-2">
-        <p className="text-xs font-medium text-sidebar-foreground/90 truncate">{user?.name}</p>
-        <p className="text-[11px] text-sidebar-foreground/50 truncate">{user?.department}</p>
-      </div>
+      <Link
+        to={user?.role === "ROLE_HOD" ? "/hod/profile" : "/staff/profile"}
+        onClick={onNavigate}
+        className="flex items-center gap-3 px-3 py-2.5 mb-1 rounded-lg hover:bg-sidebar-accent/50 transition-colors cursor-pointer"
+      >
+        <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center shrink-0">
+          <span className="text-xs font-bold text-primary-foreground">{user?.name?.charAt(0)}</span>
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-sidebar-foreground/90 truncate">{user?.name}</p>
+          <p className="text-[11px] text-sidebar-foreground/50 truncate">{user?.department}</p>
+        </div>
+      </Link>
       <button
         onClick={logout}
         className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-destructive transition-colors"

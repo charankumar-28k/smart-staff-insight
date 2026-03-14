@@ -11,6 +11,7 @@ import StaffAttendance from "@/pages/staff/StaffAttendance";
 import StaffProgress from "@/pages/staff/StaffProgress";
 import StaffMessages from "@/pages/staff/StaffMessages";
 import StaffInsights from "@/pages/staff/StaffInsights";
+import StaffProfile from "@/pages/staff/StaffProfile";
 import HodDashboard from "@/pages/hod/HodDashboard";
 import HodStaffManagement from "@/pages/hod/HodStaffManagement";
 import HodAttendance from "@/pages/hod/HodAttendance";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/staff/progress" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffProgress /></ProtectedRoute>} />
             <Route path="/staff/messages" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffMessages /></ProtectedRoute>} />
             <Route path="/staff/insights" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffInsights /></ProtectedRoute>} />
+            <Route path="/staff/profile" element={<ProtectedRoute allowedRole="ROLE_STAFF"><StaffProfile /></ProtectedRoute>} />
 
             {/* HOD Routes */}
             <Route path="/hod" element={<ProtectedRoute allowedRole="ROLE_HOD"><HodDashboard /></ProtectedRoute>} />
