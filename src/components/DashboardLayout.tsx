@@ -128,19 +128,31 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header */}
-        {isMobile && (
-          <header className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card shrink-0">
-            <button onClick={() => setOpen(true)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
-              <Menu className="w-5 h-5 text-foreground" />
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-gradient-primary flex items-center justify-center">
-                <GraduationCap className="w-4 h-4 text-primary-foreground" />
+        <header className={`flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0 ${!isMobile ? '' : ''}`}>
+          <div className="flex items-center gap-3">
+            {isMobile && (
+              <button onClick={() => setOpen(true)} className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+                <Menu className="w-5 h-5 text-foreground" />
+              </button>
+            )}
+            {isMobile && (
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-md bg-gradient-primary flex items-center justify-center">
+                  <GraduationCap className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <span className="text-sm font-bold text-foreground">SmartPortal</span>
               </div>
-              <span className="text-sm font-bold text-foreground">SmartPortal</span>
-            </div>
-          </header>
-        )}
+            )}
+            {!isMobile && <h2 className="text-sm font-medium text-muted-foreground">{location.pathname.split("/").pop()?.replace(/-/g, " ").replace(/^\w/, c => c.toUpperCase()) || "Dashboard"}</h2>}
+          </div>
+          <button
+            onClick={() => setDark(!dark)}
+            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            aria-label="Toggle dark mode"
+          >
+            {dark ? <Sun className="w-4.5 h-4.5 text-warning" /> : <Moon className="w-4.5 h-4.5 text-muted-foreground" />}
+          </button>
+        </header>
 
         <main className="flex-1 overflow-y-auto">
           <div className="p-4 sm:p-6 lg:p-8 max-w-7xl">{children}</div>
