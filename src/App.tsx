@@ -18,6 +18,7 @@ import HodAttendance from "@/pages/hod/HodAttendance";
 import HodProgress from "@/pages/hod/HodProgress";
 import HodCommunication from "@/pages/hod/HodCommunication";
 import HodAnalytics from "@/pages/hod/HodAnalytics";
+import HodProfile from "@/pages/hod/HodProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/hod/progress" element={<ProtectedRoute allowedRole="ROLE_HOD"><HodProgress /></ProtectedRoute>} />
             <Route path="/hod/communication" element={<ProtectedRoute allowedRole="ROLE_HOD"><HodCommunication /></ProtectedRoute>} />
             <Route path="/hod/analytics" element={<ProtectedRoute allowedRole="ROLE_HOD"><HodAnalytics /></ProtectedRoute>} />
+            <Route path="/hod/profile" element={<ProtectedRoute allowedRole="ROLE_HOD"><HodProfile /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
