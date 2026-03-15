@@ -18,6 +18,7 @@ import HodAttendance from "@/pages/hod/HodAttendance";
 import HodProgress from "@/pages/hod/HodProgress";
 import HodCommunication from "@/pages/hod/HodCommunication";
 import HodAnalytics from "@/pages/hod/HodAnalytics";
+import HodProfile from "@/pages/hod/HodProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
