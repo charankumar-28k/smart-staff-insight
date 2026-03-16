@@ -11,7 +11,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const staffLinks = [
   { to: "/staff", label: "Dashboard", icon: LayoutDashboard },
   { to: "/staff/attendance", label: "Attendance", icon: CalendarCheck },
-  { to: "/staff/progress", label: "Academic Progress", icon: BookOpen },
+  { to: "/staff/progress", label: "Syllabus Progress", icon: BookOpen },
+  { to: "/staff/academic", label: "Academic Progress", icon: ClipboardList },
   { to: "/staff/messages", label: "Messages", icon: MessageSquare },
   { to: "/staff/insights", label: "AI Insights", icon: Brain },
 ];
