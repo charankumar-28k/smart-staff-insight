@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard, CalendarCheck, BookOpen, MessageSquare, Brain,
-  Users, BarChart3, LogOut, GraduationCap, Menu, X, Moon, Sun
+  Users, BarChart3, LogOut, GraduationCap, Menu, X, Moon, Sun, Building2, ClipboardList
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
