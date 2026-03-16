@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   LayoutDashboard, CalendarCheck, BookOpen, MessageSquare, Brain,
-  Users, BarChart3, LogOut, GraduationCap, Menu, X, Moon, Sun
+  Users, BarChart3, LogOut, GraduationCap, Menu, X, Moon, Sun, Building2, ClipboardList
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,16 +11,19 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const staffLinks = [
   { to: "/staff", label: "Dashboard", icon: LayoutDashboard },
   { to: "/staff/attendance", label: "Attendance", icon: CalendarCheck },
-  { to: "/staff/progress", label: "Academic Progress", icon: BookOpen },
+  { to: "/staff/progress", label: "Syllabus Progress", icon: BookOpen },
+  { to: "/staff/academic", label: "Academic Progress", icon: ClipboardList },
   { to: "/staff/messages", label: "Messages", icon: MessageSquare },
   { to: "/staff/insights", label: "AI Insights", icon: Brain },
 ];
 
 const hodLinks = [
   { to: "/hod", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/hod/departments", label: "Departments", icon: Building2 },
   { to: "/hod/staff", label: "Staff Management", icon: Users },
   { to: "/hod/attendance", label: "Attendance Monitor", icon: CalendarCheck },
-  { to: "/hod/progress", label: "Academic Progress", icon: BookOpen },
+  { to: "/hod/progress", label: "Syllabus Progress", icon: BookOpen },
+  { to: "/hod/academic", label: "Academic Progress", icon: ClipboardList },
   { to: "/hod/communication", label: "Communication", icon: MessageSquare },
   { to: "/hod/analytics", label: "Analytics & AI", icon: BarChart3 },
 ];
