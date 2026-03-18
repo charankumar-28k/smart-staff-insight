@@ -7,6 +7,7 @@ interface CollegeContextType {
   addSection: (deptId: string, yearId: string, sectionName: string) => void;
   addSubject: (deptId: string, yearId: string, sectionId: string, subject: Omit<Subject, "id">) => void;
   addYear: (deptId: string, yearName: string) => void;
+  addStudent: (deptId: string, yearId: string, sectionId: string, student: Omit<Student, "id" | "marks">) => void;
   updateStudentMark: (deptId: string, yearId: string, sectionId: string, studentId: string, subjectId: string, mark: number) => void;
   getStaffAssignments: (staffId: string) => { dept: Department; year: AcademicYear; section: Section; subject: Subject }[];
 }
@@ -59,6 +60,19 @@ export const CollegeProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }));
   }, []);
 
+  const addStudent = useCallback((deptId: string, yearId: string, sectionId: string, student: Omit<Student, "id" | "marks">) => {
+    setDepartments(prev => prev.map(d => d.id !== deptId ? d : {
+      ...d,
+      years: d.years.map(y => y.id !== yearId ? y : {
+        ...y,
+        sections: y.sections.map(sec => sec.id !== sectionId ? sec : {
+          ...sec,
+          students: [...sec.students, { ...student, id: `stu-${Date.now()}`, marks: {} }],
+        }),
+      }),
+    }));
+  }, []);
+
   const updateStudentMark = useCallback((deptId: string, yearId: string, sectionId: string, studentId: string, subjectId: string, mark: number) => {
     setDepartments(prev => prev.map(d => d.id !== deptId ? d : {
       ...d,
@@ -92,7 +106,7 @@ export const CollegeProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [departments]);
 
   return (
-    <CollegeContext.Provider value={{ departments, addDepartment, addSection, addSubject, addYear, updateStudentMark, getStaffAssignments }}>
+    <CollegeContext.Provider value={{ departments, addDepartment, addSection, addSubject, addYear, addStudent, updateStudentMark, getStaffAssignments }}>
       {children}
     </CollegeContext.Provider>
   );
