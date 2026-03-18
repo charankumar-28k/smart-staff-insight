@@ -60,6 +60,19 @@ export const CollegeProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }));
   }, []);
 
+  const addStudent = useCallback((deptId: string, yearId: string, sectionId: string, student: Omit<Student, "id" | "marks">) => {
+    setDepartments(prev => prev.map(d => d.id !== deptId ? d : {
+      ...d,
+      years: d.years.map(y => y.id !== yearId ? y : {
+        ...y,
+        sections: y.sections.map(sec => sec.id !== sectionId ? sec : {
+          ...sec,
+          students: [...sec.students, { ...student, id: `stu-${Date.now()}`, marks: {} }],
+        }),
+      }),
+    }));
+  }, []);
+
   const updateStudentMark = useCallback((deptId: string, yearId: string, sectionId: string, studentId: string, subjectId: string, mark: number) => {
     setDepartments(prev => prev.map(d => d.id !== deptId ? d : {
       ...d,
