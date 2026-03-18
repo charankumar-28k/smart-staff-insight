@@ -7,6 +7,7 @@ interface CollegeContextType {
   addSection: (deptId: string, yearId: string, sectionName: string) => void;
   addSubject: (deptId: string, yearId: string, sectionId: string, subject: Omit<Subject, "id">) => void;
   addYear: (deptId: string, yearName: string) => void;
+  addStudent: (deptId: string, yearId: string, sectionId: string, student: Omit<Student, "id" | "marks">) => void;
   updateStudentMark: (deptId: string, yearId: string, sectionId: string, studentId: string, subjectId: string, mark: number) => void;
   getStaffAssignments: (staffId: string) => { dept: Department; year: AcademicYear; section: Section; subject: Subject }[];
 }
