@@ -106,7 +106,7 @@ export const CollegeProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [departments]);
 
   return (
-    <CollegeContext.Provider value={{ departments, addDepartment, addSection, addSubject, addYear, updateStudentMark, getStaffAssignments }}>
+    <CollegeContext.Provider value={{ departments, addDepartment, addSection, addSubject, addYear, addStudent, updateStudentMark, getStaffAssignments }}>
       {children}
     </CollegeContext.Provider>
   );
