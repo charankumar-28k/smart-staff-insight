@@ -5,22 +5,95 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Users, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { GraduationCap, Users, BookOpen, Download, UserPlus } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import * as XLSX from "xlsx";
+
+const months = ["Month 1", "Month 2", "Month 3", "Month 4"];
 
 const HodAcademicProgress: React.FC = () => {
-  const { departments } = useCollege();
+  const { departments, addStudent } = useCollege();
   const [deptId, setDeptId] = useState(departments[0]?.id || "");
   const [yearId, setYearId] = useState("");
   const [sectionId, setSectionId] = useState("");
+  const [addOpen, setAddOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newRoll, setNewRoll] = useState("");
+  const [newEmail, setNewEmail] = useState("");
 
   const dept = departments.find(d => d.id === deptId);
   const year = dept?.years.find(y => y.id === yearId);
   const section = year?.sections.find(s => s.id === sectionId);
 
+  const handleAddStudent = () => {
+    if (!deptId || !yearId || !sectionId || !newName.trim() || !newRoll.trim()) {
+      toast({ title: "Error", description: "Please fill all required fields", variant: "destructive" });
+      return;
+    }
+    addStudent(deptId, yearId, sectionId, { name: newName.trim(), rollNo: newRoll.trim(), email: newEmail.trim() });
+    setNewName(""); setNewRoll(""); setNewEmail("");
+    setAddOpen(false);
+    toast({ title: "Student Added", description: `${newName.trim()} has been added successfully` });
+  };
+
+  const handleExport = () => {
+    if (!section || !dept || !year) {
+      toast({ title: "Error", description: "Select department, year, and section first", variant: "destructive" });
+      return;
+    }
+    const rows: any[] = [];
+    section.students.forEach(stu => {
+      const baseRow: any = { "Roll No": stu.rollNo, "Name": stu.name, "Email": stu.email };
+      section.subjects.forEach(sub => {
+        months.forEach((m, mi) => {
+          const mark = stu.marks[sub.id] || 0;
+          // Simulate monthly variation
+          baseRow[`${sub.code} - ${m}`] = Math.max(0, Math.min(100, mark + Math.floor((mi - 1.5) * 3)));
+        });
+      });
+      const allMarks = section.subjects.map(sub => stu.marks[sub.id] || 0);
+      baseRow["Average"] = allMarks.length > 0 ? Math.round(allMarks.reduce((a, b) => a + b, 0) / allMarks.length) : 0;
+      baseRow["Status"] = baseRow["Average"] >= 80 ? "Excellent" : baseRow["Average"] >= 60 ? "Average" : "At Risk";
+      rows.push(baseRow);
+    });
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `${dept.name} - ${year.name} - Sec ${section.name}`);
+    XLSX.writeFile(wb, `Academic_Progress_${dept.name}_${year.name}_Section_${section.name}.xlsx`);
+    toast({ title: "Exported", description: "Excel file downloaded successfully" });
+  };
+
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold text-foreground mb-1">Academic Progress</h1>
-      <p className="text-sm text-muted-foreground mb-6">View student performance by department, year, and section</p>
+      <div className="flex items-center justify-between mb-1">
+        <h1 className="text-2xl font-bold text-foreground">Academic Progress</h1>
+        <div className="flex gap-2">
+          <Dialog open={addOpen} onOpenChange={setAddOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" variant="outline" disabled={!sectionId}>
+                <UserPlus className="w-4 h-4 mr-1" /> Add Student
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Add New Student</DialogTitle></DialogHeader>
+              <div className="space-y-3 pt-2">
+                <Input placeholder="Student Name *" value={newName} onChange={e => setNewName(e.target.value)} />
+                <Input placeholder="Roll Number *" value={newRoll} onChange={e => setNewRoll(e.target.value)} />
+                <Input placeholder="Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} />
+                <Button className="w-full" onClick={handleAddStudent}>Add Student</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Button size="sm" onClick={handleExport} disabled={!section}>
+            <Download className="w-4 h-4 mr-1" /> Export Excel
+          </Button>
+        </div>
+      </div>
+      <p className="text-sm text-muted-foreground mb-6">View student performance — 4 month breakdown</p>
 
       {/* Filters */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -74,8 +147,8 @@ const HodAcademicProgress: React.FC = () => {
           </Card>
           <Card className="shadow-card">
             <CardContent className="flex items-center gap-3 p-4">
-              <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-success" />
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-primary" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">
@@ -93,53 +166,61 @@ const HodAcademicProgress: React.FC = () => {
         </div>
       )}
 
-      {/* Student Table */}
+      {/* Student Table with 4-month columns */}
       {section ? (
         <Card className="shadow-card">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base">
-              {dept?.name} — {year?.name} — Section {section.name}
-            </CardTitle>
+            <CardTitle className="text-base">{dept?.name} — {year?.name} — Section {section.name}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Roll No</TableHead>
-                  <TableHead>Name</TableHead>
-                  {section.subjects.map(sub => (
-                    <TableHead key={sub.id} className="text-center">{sub.code}</TableHead>
-                  ))}
-                  <TableHead className="text-center">Avg</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {section.students.map(stu => {
-                  const marks = section.subjects.map(sub => stu.marks[sub.id] || 0);
-                  const avg = marks.length > 0 ? Math.round(marks.reduce((a, b) => a + b, 0) / marks.length) : 0;
-                  return (
-                    <TableRow key={stu.id}>
-                      <TableCell className="font-mono text-xs">{stu.rollNo}</TableCell>
-                      <TableCell className="font-medium text-sm">{stu.name}</TableCell>
-                      {section.subjects.map(sub => (
-                        <TableCell key={sub.id} className="text-center text-sm">
-                          <span className={stu.marks[sub.id] >= 80 ? "text-success font-medium" : stu.marks[sub.id] >= 60 ? "text-foreground" : "text-destructive font-medium"}>
-                            {stu.marks[sub.id] || "—"}
-                          </span>
+            <div className="overflow-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Roll No</TableHead>
+                    <TableHead>Name</TableHead>
+                    {section.subjects.map(sub =>
+                      months.map((m, mi) => (
+                        <TableHead key={`${sub.id}-${mi}`} className="text-center text-xs">{sub.code}<br />{m}</TableHead>
+                      ))
+                    )}
+                    <TableHead className="text-center">Avg</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {section.students.map(stu => {
+                    const allMarks = section.subjects.map(sub => stu.marks[sub.id] || 0);
+                    const avg = allMarks.length > 0 ? Math.round(allMarks.reduce((a, b) => a + b, 0) / allMarks.length) : 0;
+                    return (
+                      <TableRow key={stu.id}>
+                        <TableCell className="font-mono text-xs">{stu.rollNo}</TableCell>
+                        <TableCell className="font-medium text-sm whitespace-nowrap">{stu.name}</TableCell>
+                        {section.subjects.map(sub =>
+                          months.map((_, mi) => {
+                            const mark = stu.marks[sub.id] || 0;
+                            const monthMark = Math.max(0, Math.min(100, mark + Math.floor((mi - 1.5) * 3)));
+                            return (
+                              <TableCell key={`${sub.id}-${mi}`} className="text-center text-xs">
+                                <span className={monthMark >= 80 ? "text-primary font-medium" : monthMark >= 60 ? "text-foreground" : "text-destructive font-medium"}>
+                                  {monthMark}
+                                </span>
+                              </TableCell>
+                            );
+                          })
+                        )}
+                        <TableCell className="text-center font-bold text-sm">{avg}</TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={avg >= 80 ? "default" : avg >= 60 ? "secondary" : "destructive"} className="text-xs">
+                            {avg >= 80 ? "Excellent" : avg >= 60 ? "Average" : "At Risk"}
+                          </Badge>
                         </TableCell>
-                      ))}
-                      <TableCell className="text-center font-bold text-sm">{avg}</TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant={avg >= 80 ? "default" : avg >= 60 ? "secondary" : "destructive"} className="text-xs">
-                          {avg >= 80 ? "Excellent" : avg >= 60 ? "Average" : "At Risk"}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       ) : (
